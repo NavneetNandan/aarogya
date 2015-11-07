@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPref.edit();
         editor.putString("username",username);//// TODO: add all entries
+        editor.commit();
     }
     public class Values{
         String nameValue;

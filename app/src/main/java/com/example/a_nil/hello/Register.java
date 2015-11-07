@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -69,6 +70,17 @@ public class Register extends AppCompatActivity {
         final String email_str=email.getText().toString();
         EditText phoneno=(EditText)findViewById(R.id.edphonenumber);
         final String phoneno_str=phoneno.getText().toString();
+        SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPref.edit();
+       editor.putString("name",name_str);
+        editor.putString("username",username_str);
+        editor.putString("dob",dob_str);
+        editor.putString("password",password_str);
+        editor.putString("email",email_str);
+        editor.putString("mob",phoneno_str);
+        editor.putString("gender",gender_str);
+        editor.putString("bloodgroup",bd_str);
+        editor.commit();
 
             if (isPasswordValid(password_str)) {
                 if(!TextUtils.isEmpty(username_str)&&isUserValid(username_str)&&!TextUtils.isEmpty(dob_str)&&!TextUtils.isEmpty(bd_str)&&!TextUtils.isEmpty(gender_str)&&!TextUtils.isEmpty(email_str)&&!TextUtils.isEmpty(phoneno_str)){
@@ -100,12 +112,12 @@ public class Register extends AppCompatActivity {
                             Log.e("taking","params");
                             Map<String,String> params = new HashMap<String, String>();
                             params.put("name",name_str);
-                        params.put("username",username_str);//"name",name_string
-                        params.put("dob",dob_str);
-                        params.put("password",password_str);
-                        params.put("email",email_str);
-                        params.put("mob",phoneno_str);
-                        params.put("gender",gender_str);
+                            params.put("username",username_str);
+                            params.put("dob",dob_str);
+                            params.put("password",password_str);
+                            params.put("email",email_str);
+                            params.put("mob",phoneno_str);
+                            params.put("gender",gender_str);
                         params.put("bloodgroup",bd_str);
                             return params;
                         }};
