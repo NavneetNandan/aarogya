@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view0"
+                android:layout_gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="8dp"
+                android:layout_marginTop="5dp">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="140sp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Health Recorder"
+                        android:id="@+id/textView3"
+                        android:textSize="45sp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:background="#009688"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Record Your Health"
+                        android:id="@+id/textView"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:textSize="20sp"
+                        android:padding="10dp" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view1"
+                android:layout_gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/card_view0">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="140sp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Health Buzz"
+                        android:id="@+id/textView1"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="45sp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:background="#9C27B0"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keep you up to date with latest Health Buzz"
+                        android:id="@+id/textView0"
+                        android:gravity="center_vertical"
+                        android:textSize="20sp"
+                        android:padding="10dp" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/card_view2"
+                android:layout_gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardCornerRadius="8dp"
+                card_view:cardElevation="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/card_view1">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="140sp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Calorie Calculator"
+                        android:id="@+id/textView4"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="45sp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:background="#FF9800"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Check your calorie requirement"
+                        android:id="@+id/textView5"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:textSize="20sp"
+                        android:padding="10dp" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

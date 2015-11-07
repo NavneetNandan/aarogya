@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -29,7 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 case R.id.etrigister:
                 {
-                    Intent intent=new Intent(this,Rigister.class);
+                    Intent intent=new Intent(this,Register.class);
                     startActivity(intent);
                     break;
                 }
