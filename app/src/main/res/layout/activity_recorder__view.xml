@@ -11,8 +11,262 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Name"
+        android:textSize="26sp"
         android:id="@+id/textView4"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#e0000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editname"
+        android:layout_above="@+id/age"
+        android:layout_alignTop="@+id/textView4"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/textView4"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Height"
+        android:id="@+id/height"
+        android:textSize="26sp"
+        android:paddingBottom="5dp"
+        android:layout_below="@+id/age"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Age"
+        android:id="@+id/age"
+        android:textSize="26sp"
+        android:paddingBottom="5dp"
+        android:layout_below="@+id/textView4"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editheight"
+        android:layout_above="@+id/weight"
+        android:layout_alignTop="@+id/height"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/height"
+        android:textColor="#bb000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editage"
+        android:layout_above="@+id/height"
+        android:layout_alignTop="@+id/age"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/age"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weight(kg)"
+        android:id="@+id/weight"
+        android:textSize="26sp"
+        android:paddingBottom="5dp"
+        android:layout_below="@+id/height"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editweight"
+        android:layout_above="@+id/bloodgrp"
+        android:layout_alignTop="@+id/weight"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/weight"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blood Group"
+        android:id="@+id/bloodgrp"
+        android:textSize="26sp"
+        android:layout_below="@+id/weight"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editbloodgrp"
+        android:layout_above="@+id/martialstatus"
+        android:layout_alignTop="@+id/bloodgrp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/bloodgrp"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Martial Status"
+        android:id="@+id/martialstatus"
+        android:textSize="26sp"
+        android:layout_below="@+id/bloodgrp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editmartialstatus"
+        android:layout_above="@+id/blood_pressure"
+        android:layout_alignTop="@+id/martialstatus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/martialstatus"
+        android:textColor="#bb000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blood Pressure"
+        android:id="@+id/blood_pressure"
+        android:layout_below="@+id/martialstatus"
+        android:layout_alignParentLeft="true"
+        android:textSize="26sp"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editblood_pressure"
+        android:layout_above="@+id/vision"
+        android:layout_alignTop="@+id/blood_pressure"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/blood_pressure"
+        android:textColor="#bb000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="Vision"
+        android:textSize="26sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/vision"
+        android:layout_below="@id/blood_pressure"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editvision"
+        android:layout_above="@+id/haemoglobin"
+        android:layout_alignTop="@+id/vision"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/vision"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Haemoglobin"
+        android:id="@+id/haemoglobin"
+        android:textSize="26sp"
+        android:layout_below="@+id/vision"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/edithaemoglobin"
+        android:layout_above="@+id/bloodsugar"
+        android:layout_alignTop="@+id/haemoglobin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/haemoglobin"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blood Sugar"
+        android:id="@+id/bloodsugar"
+        android:layout_below="@+id/haemoglobin"
+        android:textSize="26sp"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editbloodsugar"
+        android:layout_above="@+id/Thyroid"
+        android:layout_alignTop="@+id/bloodsugar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/bloodsugar"
+        android:textColor="#bb000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thyroxine"
+        android:id="@+id/Thyroid"
+        android:textSize="26sp"
+        android:layout_below="@+id/bloodsugar"
+        android:layout_marginTop="10dp"
+        android:textColor="#e1000000" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editThyroid"
+        android:layout_alignTop="@+id/Thyroid"
+        android:layout_alignBottom="@+id/Thyroid"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/blood_pressure"
+        android:textSize="26sp"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/Thyroid"
+        android:textColor="#bb000000" />
+
 </RelativeLayout>

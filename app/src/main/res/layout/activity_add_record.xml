@@ -24,9 +24,8 @@
             android:inputType="textPersonName"
             android:id="@+id/editname"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/name"
-            android:layout_toEndOf="@+id/name"
-            android:layout_marginLeft="25dp" />
+            android:layout_toRightOf="@+id/height"
+            android:layout_toEndOf="@+id/height" />
 
 
         <TextView
@@ -34,10 +33,13 @@
             android:layout_height="wrap_content"
             android:text="Height"
             android:id="@+id/height"
-            android:layout_below="@+id/editname"
-            android:layout_alignParentStart="true"
             android:textSize="26sp"
-            android:textColor="#d6000000" />
+            android:textColor="#d6000000"
+            android:layout_alignBottom="@+id/editheight"
+            android:layout_alignLeft="@id/name"
+            android:layout_toLeftOf="@+id/editheight"
+            android:layout_alignParentRight="false"
+            android:paddingBottom="5dp"/>
 
         <EditText
             android:layout_width="wrap_content"
@@ -48,7 +50,7 @@
             android:id="@+id/editheight"
             android:maxWidth="3dp"
             android:layout_below="@+id/editname"
-            android:layout_toEndOf="@+id/Thyroid" />
+            android:layout_toRightOf="@+id/Thyroid" />
 
 
         <TextView
@@ -57,8 +59,10 @@
             android:text="Weight"
             android:id="@+id/weight"
             android:textSize="26sp"
-            android:layout_below="@+id/editheight"
-            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/editweight"
+            android:paddingBottom="5dp"
             android:textColor="#d6000000" />
 
         <EditText
@@ -69,7 +73,7 @@
             android:ems="10"
             android:inputType="numberDecimal"
             android:layout_below="@+id/editheight"
-            android:layout_alignStart="@+id/editheight" />
+            android:layout_alignLeft="@+id/editheight"/>
 
 
         <TextView
@@ -79,7 +83,7 @@
             android:id="@+id/bloodgrp"
             android:textSize="26sp"
             android:layout_below="@+id/editweight"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:textColor="#d6000000" />
 
         <TextView
@@ -99,7 +103,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/editblood"
-            android:layout_alignParentStart="true" >
+            android:layout_alignParentLeft="true" >
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -123,19 +127,19 @@
             android:text="Blood Pressure"
             android:id="@+id/blood_pressure"
             android:layout_below="@+id/radiogroup"
-            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
             android:textSize="26sp"
             android:textColor="#d6000000" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
+            android:inputType="text"
             android:hint="in mm of hg"
             android:ems="10"
             android:id="@+id/editbloodpressure"
             android:layout_below="@+id/blood_pressure"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentLeft="true" />
         <TextView
             android:layout_width="wrap_content"
             android:text="Vision"
@@ -165,7 +169,9 @@
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:id="@+id/edithaemoglobin"
-            android:layout_below="@+id/haemoglobin"/>
+            android:layout_below="@+id/haemoglobin"
+            android:hint="in g/dl"
+            android:inputType="number" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -179,11 +185,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/editbloodsugar"
             android:layout_below="@id/bloodsugar"
-            android:hint="in g/dl" />
+            android:hint="in g/dl"
+            android:inputType="number" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thyroid"
+            android:text="Thyroxine"
             android:id="@+id/Thyroid"
             android:textSize="26sp"
             android:layout_below="@+id/editbloodsugar"
@@ -200,12 +207,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Submit"
-            android:background="@android:color/holo_green_light"
+            android:background="#006064"
             android:id="@+id/submit"
             android:layout_below="@id/edithyroid"
             android:gravity="center"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:visibility="visible"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
 
     </RelativeLayout>
 

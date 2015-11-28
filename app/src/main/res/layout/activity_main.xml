@@ -1,69 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="18dp"
+    android:padding="5dp"
     android:orientation="vertical"
     tools:context="com.example.a_nil.hello.Login"
     android:id="@+id/mainbody"
     android:weightSum="1">
-
-    <TextView
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        android:id="@+id/etusername"
-        android:textSize="26sp" />
+        android:layout_height="140sp"
+        android:id="@+id/imageView3"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/logo"
+        android:nestedScrollingEnabled="true"
+        android:layout_marginBottom="40sp"
+        android:layout_marginTop="40sp" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/edusername"
-        android:textSize="20sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Password"
-        android:id="@+id/etpassward"
-        android:textSize="26sp" />
+        android:textSize="20sp"
+        android:hint="Username"
+        android:layout_marginBottom="10sp"
+        android:maxLines="1" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:ems="10"
         android:id="@+id/edpassward"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:hint="Password" />
 
     <Button
-        android:layout_width="150dp"
-        android:layout_height="75dp"
-        android:text="LOGIN"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="SIGN IN"
         android:id="@+id/loginbtn"
         android:layout_gravity="center_horizontal"
-        android:textSize="26sp" />
+        android:textSize="26sp"
+        android:background="#006064"
+        android:textColor="#ffffff"
+        android:layout_marginTop="20sp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OR"
+        android:text="New user? Register Here"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:paddingTop="15dp"
+        android:paddingBottom="5dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/register"
         android:layout_gravity="center_horizontal"
-        android:textSize="15sp"
-        android:textColor="#000000" />
-
-    <Button
-        android:text="Register"
-        android:layout_width="150dp"
-        android:layout_height="75dp"
-        android:layout_gravity="center_horizontal"
-        android:textSize="26sp"
-        android:id="@+id/etrigister" />
+        android:clickable="true"
+        android:linksClickable="false" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/textView5" />
-
-
 </LinearLayout>
+
+</ScrollView>

@@ -14,7 +14,7 @@
                 android:layout_gravity="top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                card_view:cardCornerRadius="8dp"
+                card_view:cardCornerRadius="5dp"
                 android:layout_marginTop="5dp">
                 <LinearLayout
                     android:orientation="vertical"
@@ -49,7 +49,7 @@
                 android:layout_gravity="top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                card_view:cardCornerRadius="8dp"
+                card_view:cardCornerRadius="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_below="@+id/card_view0">
                 <LinearLayout
@@ -85,7 +85,7 @@
                 android:layout_gravity="top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                card_view:cardCornerRadius="8dp"
+                card_view:cardCornerRadius="5dp"
                 card_view:cardElevation="2dp"
                 android:layout_marginTop="5dp"
                 android:layout_below="@+id/card_view1">

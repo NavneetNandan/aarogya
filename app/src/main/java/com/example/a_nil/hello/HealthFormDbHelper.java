@@ -17,7 +17,6 @@ import android.provider.BaseColumns;
     public static abstract class HealthEntry implements BaseColumns {
         public static final String TABLE_NAME = "entry";
         public static final String COLUMN_NAME_USERNAME = "username";
-        public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_AGE = "age";
         public static final String COLUMN_NAME_DOE = "doe";
         public static final String COLUMN_NAME_HEIGHT = "height";
@@ -42,7 +41,6 @@ public class HealthFormDbHelper extends SQLiteOpenHelper {
                     HealthFormContract.HealthEntry._ID + " INTEGER PRIMARY KEY," +
                     HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_DOE + TEXT_TYPE + COMMA_SEP +
-                    HealthFormContract.HealthEntry.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_AGE + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT + TEXT_TYPE + COMMA_SEP +

@@ -1,70 +1,188 @@
 package com.example.a_nil.hello;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Healthrecorder extends AppCompatActivity {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
+public class Healthrecorder extends AppCompatActivity {
+    String jsonStr=null;
+    String username=null;
+    Context cont =null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_healthrecorder);
-        String username=null;
-        //String date=null;
-        String JsonStr=null;
-        String[] alldates=null;
-        JSONArray info=null;
-        try {
-            JSONObject db=new JSONObject(JsonStr);
-            JSONObject user=db.getJSONObject(username);
-            info=user.getJSONArray("info");
-            alldates=new String[info.length()];
-            for(int i=0;i<info.length();i++){
-                JSONObject data=info.getJSONObject(i);
-                alldates[i]=data.getString("date");
-            }
-            ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,R.layout.list,alldates);
-            ListView listView=(ListView)findViewById(R.id.listView);
-            listView.setAdapter(adapter);
-            final Intent intent = new Intent(this,Recorder_View.class);
-            final JSONArray finalInfo = info;
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//when a news is clicked in list
-                    String data=null;
-                    try {
-                        JSONObject temp= finalInfo.getJSONObject(i);
-                        data=temp.toString();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    intent.putExtra("json",data);
-                    startActivity(intent);
-                }
-            });
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        cont=this;
+        SharedPreferences sharedPref=this.getSharedPreferences("logininfo", this.MODE_PRIVATE);
+        username=sharedPref.getString("username",null);
+        HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
+        SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
+        String searchQuery = "SELECT  * FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
+        Cursor c = healthDb.rawQuery(searchQuery, null);
+        c.moveToFirst();
+        int count=0;
+        while (c.isAfterLast() == false){
+            count++;
+            c.moveToNext();
         }
+        Log.e("Count",""+count);
+        //if(count==0){
+            FetchNetwork fetchNetwork=new FetchNetwork();
+            fetchNetwork.execute();
+        //}
+        /*else{
+            int i=0;
+        c.moveToFirst();
+            String[] alldates=new String[50];
+            while (c.isAfterLast() == false){
+                alldates[i++]=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));
+                Log.e("date",""+alldates[i]);
+                c.moveToNext();
+            }
+            //ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,R.layout.list,alldates);
+            ListView listView=(ListView)findViewById(R.id.listView);
+            //listView.setAdapter(adapter);
+        //}*/
+
+
+        Button addNew=(Button)findViewById(R.id.button);
+
+        addNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent addnew=new Intent(cont,Add_record.class);
+                startActivity(addnew);
+
+            }
+        });
+
+
 
     }
+    public class FetchNetwork extends AsyncTask<Void, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Void... net) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
 
+            jsonStr = null;
+            try {
+                URL url = new URL("http://aarogya.6te.net/aarogya/fetch_hr.php?username="+username);
+                urlConnection =(HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream inputStream=urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if(inputStream==null)
+                {
+                    jsonStr=null;
+                }
+                reader =new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                jsonStr = buffer.toString();
+                Log.e("JSON",jsonStr);
+                // System.out.println(jsonStr);
+            }
+            catch (IOException e){
+                Log.e("PlaceholderFragment", "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
+                return null;
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            String date=null;
+            String[] alldates=null;
+            JSONArray info=null;
+            try {
+                JSONObject db=new JSONObject(jsonStr);
+                info=db.getJSONArray("detail");
+                alldates=new String[info.length()];
+                for(int i=0;i<info.length();i++){
+                    JSONObject data=info.getJSONObject(i);
+                    alldates[i]="Health Record of "+data.getString("doe");
+                }
+                ArrayAdapter<String> adapter=new ArrayAdapter<String>(cont,R.layout.list,alldates);
+                ListView listView=(ListView)findViewById(R.id.listView);
+                listView.setAdapter(adapter);
+                final Intent intent = new Intent(cont,Recorder_View.class);
+                final JSONArray finalInfo = info;
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//when a news is clicked in list
+                        String data=null;
+                        try {
+                            JSONObject temp= finalInfo.getJSONObject(i);
+                            data=temp.toString();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        intent.putExtra("json",data);
+                        startActivity(intent);
+                    }
+                });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_healthrecorder, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -75,10 +193,30 @@ public class Healthrecorder extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_SignOut: {
+                SharedPreferences sharedPref = this.getSharedPreferences("logininfo", this.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("username", null);//// TODO: add all entries
+                editor.putBoolean("loggedin", false);
+                editor.putString("name", null);
+                editor.putString("dob", null);
+                editor.putString("gender", null);
+                editor.putString("bloodgroup", null);
+                editor.putString("email", null);
+                editor.putString("mob", null);
+                editor.commit();
+                HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
+                SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
+                String deleteQuery = "DELETE FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
+                Cursor c = healthDb.rawQuery(deleteQuery, null);
+                startActivity(new Intent(this, MainActivity.class));
+                this.finish();
+                return true;
+            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }

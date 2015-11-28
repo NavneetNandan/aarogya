@@ -1,5 +1,6 @@
 package com.example.a_nil.hello;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -31,7 +32,6 @@ import com.android.volley.toolbox.Volley;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +39,8 @@ public class Register extends AppCompatActivity {
     Context abc=null;
     TextView set=null;
     static TextView date=null;
+    Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,7 @@ public class Register extends AppCompatActivity {
         set=(TextView)findViewById(R.id.error);
         date=(TextView)findViewById(R.id.editText);
         Button register=(Button)findViewById(R.id.registerbtn);
-
+        activity=this;
         Log.e("id",""+R.id.registerbtn);
 
 
@@ -55,14 +57,17 @@ public class Register extends AppCompatActivity {
     public void register(View view){
         EditText name=(EditText)findViewById(R.id.edname);
         final String name_str=name.getText().toString();
-        EditText username=(EditText)findViewById(R.id.edname);
+        EditText username=(EditText)findViewById(R.id.edusername);
         final String username_str=username.getText().toString();
+        Log.e("usrname",username_str);
         EditText password=(EditText)findViewById(R.id.edpassword);
         final String password_str=password.getText().toString();
         EditText date=(EditText)findViewById(R.id.editText);
         final String dob_str=date.getText().toString();
+        Log.e("dob_str",dob_str);
         EditText bd=(EditText)findViewById(R.id.edbd);
         final String bd_str=bd.getText().toString();
+        Log.e("Blood",bd_str);
         RadioGroup gender=(RadioGroup)findViewById(R.id.radioGroup);
         RadioButton selected=(RadioButton)findViewById(gender.getCheckedRadioButtonId());
         final String gender_str=selected.getText().toString();
@@ -70,34 +75,44 @@ public class Register extends AppCompatActivity {
         final String email_str=email.getText().toString();
         EditText phoneno=(EditText)findViewById(R.id.edphonenumber);
         final String phoneno_str=phoneno.getText().toString();
-        SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPref.edit();
-       editor.putString("name",name_str);
-        editor.putString("username",username_str);
-        editor.putString("dob",dob_str);
-        editor.putString("password",password_str);
-        editor.putString("email",email_str);
-        editor.putString("mob",phoneno_str);
-        editor.putString("gender",gender_str);
-        editor.putString("bloodgroup",bd_str);
-        editor.commit();
+
 
             if (isPasswordValid(password_str)) {
-                if(!TextUtils.isEmpty(username_str)&&isUserValid(username_str)&&!TextUtils.isEmpty(dob_str)&&!TextUtils.isEmpty(bd_str)&&!TextUtils.isEmpty(gender_str)&&!TextUtils.isEmpty(email_str)&&!TextUtils.isEmpty(phoneno_str)){
+                if(!TextUtils.isEmpty(username_str)&&isUserValid(username_str)&&!TextUtils.isEmpty(dob_str)&&!TextUtils.isEmpty(bd_str)&&!TextUtils.isEmpty(gender_str)&&!TextUtils.isEmpty(email_str)&&!TextUtils.isEmpty(phoneno_str))
+                {
                     //continue the process
                     RequestQueue queue= Volley.newRequestQueue(abc);
-                    String url ="http://aarogya.6te.net/aarogya/dbpost.php";//url given
+                    String url ="http://aarogya.6te.net/aarogya/registration.php";//url given
 // Request a string response from the provided URL.
                     Log.e("click","ok");
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
-                                    // if(response.equals(1))
-                                    startActivity(new Intent(abc,wlcome.class));
-                                    Toast.makeText(abc,"Registration successful",Toast.LENGTH_LONG).show();
-                                    Log.e("response","made");
-
+                                    Log.e("Response",response);
+                                    if(response.equals("{\"status\":1}")) {
+                                        SharedPreferences sharedPref = abc.getSharedPreferences("logininfo", abc.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPref.edit();
+                                        editor.putBoolean("loggedin", true);
+                                        editor.putString("name", name_str);
+                                        editor.putString("username", username_str);
+                                        editor.putString("dob", dob_str);
+                                        editor.putString("password", password_str);
+                                        editor.putString("email", email_str);
+                                        editor.putString("mob", phoneno_str);
+                                        editor.putString("gender", gender_str);
+                                        Log.e("blood",bd_str);
+                                        editor.putString("bloodgroup", bd_str);
+                                        editor.commit();
+                                        Toast.makeText(abc, "Registration successful", Toast.LENGTH_LONG).show();
+                                        Log.e("response", "made");
+                                        startActivity(new Intent(abc, Welcome.class));
+                                        activity.finish();
+                                    }
+                                    else{
+                                        set.setText("Username exists, give another username.");
+                                        Toast.makeText(abc, "Username exists, give another username.", Toast.LENGTH_LONG);
+                                    }
                                     //set.setText("Response is: "+ response);
                                 }
                             }, new Response.ErrorListener() {
@@ -118,27 +133,35 @@ public class Register extends AppCompatActivity {
                             params.put("email",email_str);
                             params.put("mob",phoneno_str);
                             params.put("gender",gender_str);
-                        params.put("bloodgroup",bd_str);
+                            Log.e("datablood",bd_str);
+                            params.put("bloodgroup",bd_str);
                             return params;
                         }};
                     queue.add(stringRequest);
 
                 }
-                if (TextUtils.isEmpty(username_str)) {
+                else if (TextUtils.isEmpty(username_str))
+                {
                     set.setText("Username is Required");
-                } else if (!isUserValid(username_str)) {
+                    Toast.makeText(abc,"Username is Required",Toast.LENGTH_LONG).show();
+
+                } else{ if (!isUserValid(username_str)) {
                     set.setText("Invalid Username");
+                    Toast.makeText(abc,"Invalid Username",Toast.LENGTH_LONG).show();
                 }
                 else {
                     set.setText("Please fill all fields");
+                    Toast.makeText(abc,"Please fill all fields",Toast.LENGTH_LONG).show();
                 }
             }
-            else if(!TextUtils.isEmpty(password_str)&&!isPasswordValid(password_str))
-            {
-                set.setText("Invalid Password");
-            }
+
 
         }
+            else
+            {set.setText("Invalid Password");
+        Toast.makeText(abc,"Invalid Password",Toast.LENGTH_LONG).show();}
+    }
+
 
     public void datepick(View view){
 

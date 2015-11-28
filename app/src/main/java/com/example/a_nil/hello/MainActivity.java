@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,28 +29,46 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button btnlogin;
-    Button etrigister;
+    TextView etrigister;
     EditText eusername,epassward;
     TextView set=null;
     int respons;
     Context c=null;
+    JSONObject json=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Intent healthrecord=new Intent(this,Add_record.class);
+        //startActivity(healthrecord);
+        //this.finish();
         setContentView(R.layout.activity_main);
-        Intent intent=new Intent(this,Add_record.class);
-        startActivity(intent);
         c=this;
+        SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
+        boolean loggedin=sharedPref.getBoolean("loggedin",false);
+        if(loggedin){
+            Intent home=new Intent(this,Welcome.class);
+            startActivity(home);
+            this.finish();
+        }
+
+        //Intent intent=new Intent(this,Add_record.class);
+        //startActivity(intent);
         set=(TextView)findViewById(R.id.textView5);
         eusername = (EditText) findViewById(R.id.edusername);
         epassward = (EditText) findViewById(R.id.edpassward);
-        etrigister = (Button) findViewById(R.id.etrigister);
+        etrigister = (TextView) findViewById(R.id.register);
         btnlogin = (Button) findViewById(R.id.loginbtn);
         btnlogin.setOnClickListener(this);
         etrigister.setOnClickListener(this);
@@ -64,37 +83,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (isPasswordValid(password)) {
                         if(!TextUtils.isEmpty(username)&&isUserValid(username)){
                             //continue the process
-                            if(loginsuccess(username,password))
-                            {   set.setText("Please wait, loading your data");
-                                updatePreferences(username);
-                                try {
-                                    Createdatabase db=new Createdatabase();
-                                    db.execute(username);
-                                } catch (JSONException e) {
-                                    set.setText("Json Error");
-                                    e.printStackTrace();
-                                }
-                                Intent intent=new Intent(this,wlcome.class);
-                                startActivity(intent);}
+                            login(username,password);
                             break;
                         }
-                        if (TextUtils.isEmpty(username)) {
-                            set.setText("Username is Required");
+                        if (TextUtils.isEmpty(username)||TextUtils.isEmpty(password)) {
+                            set.setText("Username & password is Required");
+                            Toast.makeText(this,"Username & password is Required",Toast.LENGTH_LONG);
                         } else if (!isUserValid(username)) {
                             set.setText("Invalid Username");
+                            Toast.makeText(this, "Invalid Username", Toast.LENGTH_LONG);
                         }
                     }
                     else if(!TextUtils.isEmpty(password)&&!isPasswordValid(password))
                     {
                         set.setText("Invalid Password");
+                        Toast.makeText(this, "Invalid Password", Toast.LENGTH_LONG);
                     }
+                    this.finish();
+                    break;
 
                     // Check for a valid email address.
                 }
-                case R.id.etrigister:
+                case R.id.register:
                 {
                     Intent intent=new Intent(this,Register.class);
                     startActivity(intent);
+                    this.finish();
                     break;
                 }
             }
@@ -109,29 +123,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //TODO: Replace this with your own logic
         return password.length()>=6 ;//password length is minimum 6
     }
-    boolean loginsuccess(final String username, final String password){
-        String url="";//url to post login request
+    void login(final String username, final String password){
+        String url="http://aarogya.6te.net/aarogya/login.php";//url to post login request
         RequestQueue queue= Volley.newRequestQueue(c);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        if(response=="1"){
-                            respons=1;
-                        }else {
-                            set.setText("Login failed");
-                            respons=0;
+                        try {
+                            Log.e("response", response);
+                            json=new JSONObject(response);
+                            respons=json.getInt("status");
+                            Log.e("status", "" + respons);
+                            if (respons==1){
+                                set.setText("Please wait, loading your data");
+                                Toast.makeText(c, "Please wait, loading your data", Toast.LENGTH_LONG);
+                                try {
+                                    updatePreferences(username);
+                                    Createdatabase createdatabase=new Createdatabase();
+                                    createdatabase.execute(username);
+
+
+
+                                } catch (JSONException e) {
+                                    set.setText("Some problem occured. Try later");
+                                    Toast.makeText(c, "Some problem occured. Try later", Toast.LENGTH_LONG);
+                                }
+                            }
+                            else set.setText("Invalid Credentials");
+                            Toast.makeText(c, "Invalid Credentials", Toast.LENGTH_LONG);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            set.setText("Connectivity issue");
+                            Toast.makeText(c, "Connectivity issue", Toast.LENGTH_LONG);
                         }
 
-                        Log.e("im", response);
-                                            }
+                    }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("volleyerror",error.toString());
                 set.setText("Connectivity Error! Please retry and check your internet connection");
-                respons=0;
+                Toast.makeText(c, "Connectivity Error! Please retry and check your internet connection", Toast.LENGTH_LONG);
+
             }
         })
         {protected Map<String,String> getParams(){
@@ -141,10 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return params;
             }};
         queue.add(stringRequest);
-        if(respons==1)
-        return true;
-        else
-            return false;
     }
 
     @Override
@@ -168,60 +199,116 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
     }
-    void updatePreferences(String username){
+    void updatePreferences(String username) throws JSONException {
         SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPref.edit();
         editor.putString("username",username);//// TODO: add all entries
+        editor.putBoolean("loggedin", true);
+        JSONObject detail = json.getJSONObject("detail");
+        String name=detail.getString("name");
+        String dob=detail.getString("dob");
+        String gender=detail.getString("gender");
+        String bloodgroup=detail.getString("bloodgroup");
+        String email=detail.getString("email");
+        String mob=detail.getString("mob");
+        editor.putString("name",name );
+        editor.putString("dob",dob);
+        editor.putString("gender",gender );
+        editor.putString("bloodgroup",bloodgroup );
+        editor.putString("email",email );
+        editor.putString("mob",mob );
         editor.commit();
     }
-    public class Values{
-        String nameValue;
-        String usernameValue;
-        String heightValue;
-        String weightValue;
-        String bloodpressValue;
-        String visionValue;
-        String haemoValue;
-        String bloodsugarValue;
-        String thyroxineValue;
-        String martstatusValue;}
+
     protected class Createdatabase extends AsyncTask<String,Void,Integer>{
         @Override
         protected Integer doInBackground(String... strings) {
-            String data=null;//// TODO: add all json related value& work;
-            JSONArray dataarray= null;
+            //// TODO: add all json related value& work;
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String jsonStr = null;
+            try {
+                URL url = new URL("http://aarogya.6te.net/aarogya/fetch_hr.php?username="+strings[0]);
+                urlConnection =(HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream inputStream=urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if(inputStream==null)
+                {
+                    jsonStr=null;
+                }
+                reader =new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                jsonStr = buffer.toString();
+                // System.out.println(jsonStr);
+            }
+            catch (IOException e){
+                Log.e("PlaceholderFragment", "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
+                return null;
+            }
+            finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e("PlaceholderFragment", "Error closing stream", e);
+                    }
+                }
+            }
             HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
             SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
             try {
-                dataarray = new JSONArray(data);
+                JSONArray dataarray = new JSONArray(jsonStr);
                 for (int i=0;i<dataarray.length();i++){
                     JSONObject dataJ=dataarray.getJSONObject(i);
                     ContentValues values = new ContentValues();
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_NAME, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_NAME));
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,DOE);//TODO:do similar work
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_AGE,""+age);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, value.usernameValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT, value.heightValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT, value.weightValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP, bloodgroup);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, value.bloodsugarValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, value.bloodpressValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, value.haemoValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS, value.martstatusValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID, value.thyroxineValue);
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_VISION, value.visionValue);
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));//TODO:do similar work
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_AGE,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_AGE));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_VISION,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_VISION));
                     healthDb.insert(HealthFormContract.HealthEntry.TABLE_NAME, null, values);
                 }
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Intent back=new Intent(c,Healthrecorder.class);
-            startActivity(back);
+
             healthDb.close();
             return 1;
         }
 
-
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            Intent intent=new Intent(c,Welcome.class);
+            startActivity(intent);
+            MainActivity.this.finish();
+        }
     }
 }
