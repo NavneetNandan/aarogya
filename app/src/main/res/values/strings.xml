@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Aarogya</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_SignOut">SignOut</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_rigister">Register</string>
+    <string name="title_activity_wlcome">Welcome</string>
+    <string name="title_activity_healthrecorder">Health Recorder</string>
+    <string name="title_activity_recorder__view">Health Record</string>
+    <string name="title_activity_add_record">New Record</string>
+    <string name="title_activity_newsbuzz">Health Buzz</string>
+    <string name="title_activity_newsdetail">News Details</string>
+    <string name="title_activity_calorie_calculator">Calorie Calculator</string>
+</resources>
