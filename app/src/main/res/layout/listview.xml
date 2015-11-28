@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:paddingRight="20dp"
+    >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="110dp"
+        android:layout_height="80dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:id="@+id/linearLayout">
+
+        <ImageView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="left|top"
+            android:scaleType="centerCrop"
+            android:id="@+id/image"
+
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout"
+        android:textColor="#000000"
+        android:paddingLeft="5dp"
+        android:paddingRight="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text1"
+        android:layout_alignBottom="@+id/linearLayout"
+        android:layout_alignLeft="@+id/text"
+        android:layout_alignStart="@+id/text"
+        android:paddingLeft="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/src"
+        android:layout_alignTop="@+id/text1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="15dp"
+        android:maxWidth="120sp" />
+
+</RelativeLayout>
