@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.a_nil.hello" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/app_iconx72"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Register"
+            android:label="@string/title_activity_rigister" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Welcome"
+            android:label="@string/title_activity_wlcome" >
+        </activity>
+        <activity
+            android:name=".Healthrecorder"
+            android:label="@string/title_activity_healthrecorder" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.Welcome" />
+        </activity>
+        <activity
+            android:name=".Recorder_View"
+            android:label="@string/title_activity_recorder__view"
+            android:parentActivityName=".Healthrecorder" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.Healthrecorder" />
+        </activity>
+        <activity
+            android:name=".Add_record"
+            android:label="@string/title_activity_add_record"
+            android:parentActivityName=".Healthrecorder" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.Healthrecorder" />
+        </activity>
+        <activity
+            android:name=".listtry"
+            android:label="@string/title_activity_newsbuzz"
+            android:parentActivityName=".Welcome" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.Welcome" />
+        </activity>
+        <activity
+            android:name=".NewsDetails"
+            android:label="@string/title_activity_newsdetail"
+            android:parentActivityName=".listtry" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.listtry" />
+        </activity>
+        <activity
+            android:name=".CalorieCalculator"
+            android:label="@string/title_activity_calorie_calculator"
+            android:parentActivityName=".Welcome"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.a_nil.hello.Welcome" />
+        </activity>
+    </application>
+
+</manifest>
