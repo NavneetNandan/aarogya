@@ -125,11 +125,9 @@ public class Add_record extends AppCompatActivity {
             value=new Values();
             ContentValues values = new ContentValues();
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,DOE);
-            values.put(HealthFormContract.HealthEntry.COLUMN_NAME_AGE,""+age);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, value.usernameValue);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT, value.heightValue);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT, value.weightValue);
-            values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP, bloodgroup);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, value.bloodsugarValue);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, value.bloodpressValue);
             values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, value.haemoValue);
@@ -171,11 +169,9 @@ public class Add_record extends AppCompatActivity {
                     Map<String,String> params = new HashMap<String, String>();
                     //params.put("JSON",jsonStr);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,DOE);
-                    params.put(HealthFormContract.HealthEntry.COLUMN_NAME_AGE,""+age);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, value.usernameValue);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT, value.heightValue);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT, value.weightValue);
-                    params.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP, bloodgroup);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, value.bloodsugarValue);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, value.bloodpressValue);
                     params.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, value.haemoValue);

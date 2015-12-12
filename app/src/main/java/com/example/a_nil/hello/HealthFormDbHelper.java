@@ -17,11 +17,9 @@ import android.provider.BaseColumns;
     public static abstract class HealthEntry implements BaseColumns {
         public static final String TABLE_NAME = "entry";
         public static final String COLUMN_NAME_USERNAME = "username";
-        public static final String COLUMN_NAME_AGE = "age";
         public static final String COLUMN_NAME_DOE = "doe";
         public static final String COLUMN_NAME_HEIGHT = "height";
         public static final String COLUMN_NAME_WEIGHT = "weight";
-        public static final String COLUMN_NAME_BLOODGROUP = "bloodgroup";
         public static final String COLUMN_NAME_HAEMOGLOBIN = "haemoglobin";
         public static final String COLUMN_NAME_BLOODPRESSURE = "bloodpressure";
         public static final String COLUMN_NAME_BLOODSUGAR = "bloodsugar";
@@ -41,10 +39,8 @@ public class HealthFormDbHelper extends SQLiteOpenHelper {
                     HealthFormContract.HealthEntry._ID + " INTEGER PRIMARY KEY," +
                     HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_DOE + TEXT_TYPE + COMMA_SEP +
-                    HealthFormContract.HealthEntry.COLUMN_NAME_AGE + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT + TEXT_TYPE + COMMA_SEP +
-                    HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN + TEXT_TYPE + COMMA_SEP +
                     HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR + TEXT_TYPE + COMMA_SEP +

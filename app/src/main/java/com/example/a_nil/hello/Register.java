@@ -76,7 +76,6 @@ public class Register extends AppCompatActivity {
         EditText phoneno=(EditText)findViewById(R.id.edphonenumber);
         final String phoneno_str=phoneno.getText().toString();
 
-
             if (isPasswordValid(password_str)) {
                 if(!TextUtils.isEmpty(username_str)&&isUserValid(username_str)&&!TextUtils.isEmpty(dob_str)&&!TextUtils.isEmpty(bd_str)&&!TextUtils.isEmpty(gender_str)&&!TextUtils.isEmpty(email_str)&&!TextUtils.isEmpty(phoneno_str))
                 {

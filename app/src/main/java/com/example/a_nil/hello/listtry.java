@@ -1,8 +1,16 @@
 package com.example.a_nil.hello;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +38,7 @@ import java.util.Date;
 
 public class listtry extends AppCompatActivity {
     //ArrayAdapter listadapter;
+    Context c=null;
     public static Drawable LoadImageFromWebOperations(String url) {//function for image download and return a drawable object
         try {
             InputStream is = (InputStream) new URL(url).getContent();
@@ -41,6 +50,7 @@ public class listtry extends AppCompatActivity {
             return null;
         }
     }
+    ProgressDialog progressDialog=null;
 
     String[] image = null;
     public ArrayList<ListData> lData = new ArrayList<ListData>();//arraylist of listdata class type
@@ -54,32 +64,44 @@ public class listtry extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listtry);
+        c=this;
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+        boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Loading Health News.\nPlease Wait...");
+        progressDialog.setCancelable(false);
+        if (isConnected) {
+            FetchNetwork fetch = new FetchNetwork();
+            progressDialog.show();
+            fetch.execute();//starting download of data
+        }
+        else {
+            Connectivityissue issuedialog=new Connectivityissue();
+            issuedialog.show(getFragmentManager(),"issue");
+        }
+            ListView list = (ListView) findViewById(R.id.listView);
+            listtry tryo = this;//getting context
+            Resources res = getResources();
+            //Log.e("id", "" + res.getIdentifier("com.aarogya.health.aarogya:layout/activity_home", null, null));
+            adapter = new CustomAdapter(this, lData, res);
 
+            final Intent intent = new Intent(this, NewsDetails.class);
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//when a news is clicked in list
+                    intent.putExtra(TITLE, lData.get(i).getTitle());
+                    intent.putExtra(DATE, lData.get(i).getDate());
+                    intent.putExtra(IMAGE, image[i]);
+                    intent.putExtra(DETAIL, lData.get(i).getDescription());
+                    intent.putExtra(LINK, lData.get(i).getLink());
+                    startActivity(intent);
+                }
+            });
+            //Log.e("set", "list");
+            list.setAdapter(adapter);
 
-        FetchNetwork fetch =new FetchNetwork();
-        fetch.execute();//starting download of data
-        ListView list=(ListView) findViewById(R.id.listView);
-        listtry tryo = this;//getting context
-        Resources res=getResources();
-        //Log.e("id", "" + res.getIdentifier("com.aarogya.health.aarogya:layout/activity_home", null, null));
-        adapter = new CustomAdapter(tryo, lData, res);
-
-        final Intent intent = new Intent(this, NewsDetails.class);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//when a news is clicked in list
-                intent.putExtra(TITLE,lData.get(i).getTitle());
-                intent.putExtra(DATE, lData.get(i).getDate());
-                intent.putExtra(IMAGE, image[i]);
-                intent.putExtra(DETAIL, lData.get(i).getDescription());
-                intent.putExtra(LINK,lData.get(i).getLink());
-                startActivity(intent);
-            }
-        });
-        //Log.e("set", "list");
-        list.setAdapter(adapter);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,7 +109,40 @@ public class listtry extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_listtry, menu);
         return true;
     }
-
+    public class Connectivityissue extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Active internet connection required!")
+                    .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ConnectivityManager manager = (ConnectivityManager) c.getSystemService(c.CONNECTIVITY_SERVICE);
+                            NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+                            boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+                            if (isConnected) {
+                                FetchNetwork fetch = new FetchNetwork();
+                                progressDialog.show();
+                                fetch.execute();//starting download of data
+                            }
+                            else {
+                                Connectivityissue issuedialog=new Connectivityissue();
+                                issuedialog.show(getFragmentManager(),"issue");
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                            Intent back= new Intent(c,Welcome.class);
+                            startActivity(back);
+                            listtry.this.finish();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -161,7 +216,6 @@ public class listtry extends AppCompatActivity {
             }
             try {
                 parseTitles(jsonStr);
-                Log.e("i m", "here1");
                 return 1;
             }
             catch (JSONException e)
@@ -175,6 +229,7 @@ public class listtry extends AppCompatActivity {
             Log.e("i m", "here");
             adapter.notifyDataSetChanged();
             Log.e("notify", "adapter");
+            progressDialog.hide();
             Loadimages loadimg = new Loadimages();
             loadimg.execute();
 
@@ -198,6 +253,7 @@ public class listtry extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer integer) {
             adapter.notifyDataSetChanged();
+
         }
     }
     public void parseTitles(String json_Str) throws JSONException

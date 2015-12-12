@@ -96,7 +96,7 @@ public class CustomAdapter extends BaseAdapter implements ListAdapter{
 
         if(data.size()<=0)
         {
-            holder.text.setText("Data Loading");
+            holder.text.setText("");
 
         }
         else

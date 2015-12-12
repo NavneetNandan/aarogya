@@ -1,5 +1,6 @@
 package com.example.a_nil.hello;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -50,10 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Intent healthrecord=new Intent(this,Add_record.class);
+       /// Intent healthrecord=new Intent(this,Healthrecorder.class);
         //startActivity(healthrecord);
         //this.finish();
         setContentView(R.layout.activity_main);
+
         c=this;
         SharedPreferences sharedPref=c.getSharedPreferences("logininfo",c.MODE_PRIVATE);
         boolean loggedin=sharedPref.getBoolean("loggedin",false);
@@ -108,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 {
                     Intent intent=new Intent(this,Register.class);
                     startActivity(intent);
-                    this.finish();
                     break;
                 }
             }
@@ -123,8 +124,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //TODO: Replace this with your own logic
         return password.length()>=6 ;//password length is minimum 6
     }
+    ProgressDialog dialog= null;
     void login(final String username, final String password){
         String url="http://aarogya.6te.net/aarogya/login.php";//url to post login request
+        dialog=new ProgressDialog(c);
+        dialog.setMessage("Verifying Credentials");
+        dialog.setCancelable(false);
+        dialog.show();
         RequestQueue queue= Volley.newRequestQueue(c);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -139,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (respons==1){
                                 set.setText("Please wait, loading your data");
                                 Toast.makeText(c, "Please wait, loading your data", Toast.LENGTH_LONG);
+                                dialog.setMessage("Loading your data");
                                 try {
                                     updatePreferences(username);
                                     Createdatabase createdatabase=new Createdatabase();
@@ -149,12 +156,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 } catch (JSONException e) {
                                     set.setText("Some problem occured. Try later");
                                     Toast.makeText(c, "Some problem occured. Try later", Toast.LENGTH_LONG);
+                                    dialog.hide();
                                 }
                             }
                             else set.setText("Invalid Credentials");
                             Toast.makeText(c, "Invalid Credentials", Toast.LENGTH_LONG);
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            dialog.hide();
                             set.setText("Connectivity issue");
                             Toast.makeText(c, "Connectivity issue", Toast.LENGTH_LONG);
                         }
@@ -164,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("volleyerror",error.toString());
+                dialog.hide();
                 set.setText("Connectivity Error! Please retry and check your internet connection");
                 Toast.makeText(c, "Connectivity Error! Please retry and check your internet connection", Toast.LENGTH_LONG);
 
@@ -253,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return null;
                 }
                 jsonStr = buffer.toString();
-                // System.out.println(jsonStr);
+                Log.e("JSON",jsonStr);
             }
             catch (IOException e){
                 Log.e("PlaceholderFragment", "Error ", e);
@@ -276,18 +286,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
             SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
             try {
-                JSONArray dataarray = new JSONArray(jsonStr);
+                JSONObject data = new JSONObject(jsonStr);
+                JSONArray dataarray=data.getJSONArray("detail");
                 for (int i=0;i<dataarray.length();i++){
                     JSONObject dataJ=dataarray.getJSONObject(i);
                     ContentValues values = new ContentValues();
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));//TODO:do similar work
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_AGE,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_AGE));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODGROUP));
-                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE));
+                    values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
                     values.put(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
@@ -296,6 +305,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
             } catch (JSONException e) {
+                Log.e("ERROR",e.toString());
                 e.printStackTrace();
             }
 
@@ -305,7 +315,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(Integer integer) {
+
             super.onPostExecute(integer);
+            dialog.hide();
             Intent intent=new Intent(c,Welcome.class);
             startActivity(intent);
             MainActivity.this.finish();

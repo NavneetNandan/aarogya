@@ -3,9 +3,14 @@ package com.example.a_nil.hello;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +20,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +39,8 @@ public class Healthrecorder extends AppCompatActivity {
     String jsonStr=null;
     String username=null;
     Context cont =null;
+    TextView msg=null;
+    ImageView img=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +51,7 @@ public class Healthrecorder extends AppCompatActivity {
         HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
         SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
         String searchQuery = "SELECT  * FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
-        Cursor c = healthDb.rawQuery(searchQuery, null);
+        final Cursor c = healthDb.rawQuery(searchQuery, null);
         c.moveToFirst();
         int count=0;
         while (c.isAfterLast() == false){
@@ -51,8 +60,42 @@ public class Healthrecorder extends AppCompatActivity {
         }
         Log.e("Count",""+count);
         //if(count==0){
-            FetchNetwork fetchNetwork=new FetchNetwork();
-            fetchNetwork.execute();
+        msg=(TextView)findViewById(R.id.textView9);
+        img=(ImageView)findViewById(R.id.imageView4);
+        Resources res = getResources();
+        final Button retry=(Button)findViewById(R.id.retry);
+        final Drawable loading=res.getDrawable(R.drawable.loading2);
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+        boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConnectivityManager manager = (ConnectivityManager) cont.getSystemService(cont.CONNECTIVITY_SERVICE);
+                NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+                boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+                if(isConnected){
+                    retry.setVisibility(View.INVISIBLE);
+                    msg.setText("Loading your old records");
+                    img.setImageDrawable(loading);
+                    FetchNetwork fetchNetwork=new FetchNetwork();
+                    fetchNetwork.execute();}
+            }
+        });
+        if(isConnected){
+            retry.setVisibility(View.INVISIBLE);
+            msg.setText("Loading your old records");
+            img.setImageDrawable(loading);
+           FetchNetwork fetchNetwork=new FetchNetwork();
+            fetchNetwork.execute();}
+        else
+        {
+            retry.setVisibility(View.VISIBLE);
+            msg.setText("Can't connect to Internet\nYour old records can't be fetched.");
+            img.setVisibility(View.VISIBLE);
+            img.setImageDrawable(res.getDrawable(R.drawable.ic_error_black_18dp));
+            Log.e("Yes","me");
+        }
         //}
         /*else{
             int i=0;
@@ -70,7 +113,14 @@ public class Healthrecorder extends AppCompatActivity {
 
 
         Button addNew=(Button)findViewById(R.id.button);
-
+        FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addnew=new Intent(cont,Add_record.class);
+                startActivity(addnew);
+            }
+        });
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,6 +203,9 @@ public class Healthrecorder extends AppCompatActivity {
                     JSONObject data=info.getJSONObject(i);
                     alldates[i]="Health Record of "+data.getString("doe");
                 }
+                img.setVisibility(View.INVISIBLE);
+                msg.setVisibility(View.INVISIBLE);
+
                 ArrayAdapter<String> adapter=new ArrayAdapter<String>(cont,R.layout.list,alldates);
                 ListView listView=(ListView)findViewById(R.id.listView);
                 listView.setAdapter(adapter);
@@ -178,6 +231,7 @@ public class Healthrecorder extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
