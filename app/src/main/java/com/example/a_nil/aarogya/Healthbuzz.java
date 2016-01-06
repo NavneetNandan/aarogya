@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,7 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class listtry extends AppCompatActivity {
+public class Healthbuzz extends AppCompatActivity {
     //ArrayAdapter listadapter;
     Context c=null;
     public static Drawable LoadImageFromWebOperations(String url) {//function for image download and return a drawable object
@@ -55,17 +55,17 @@ public class listtry extends AppCompatActivity {
     String[] image = null;
     public ArrayList<ListData> lData = new ArrayList<ListData>();//arraylist of listdata class type
     CustomAdapter adapter = null;//declaring customadapter for global use
-    public final static String TITLE = "com.aarogya.health.aarogya.listtry.titlemessage";//putting name for extras
-    public final static String DATE ="com.aarogya.health.aarogya.listtry.date";
-    public final static String IMAGE ="com.aarogya.health.aarogya.listtry.image";
-    public final static String DETAIL="com.aarogya.health.aarogya.listtry.detail";
-    public final static String LINK="com.aarogya.health.aarogya.listtry.link";
+    public final static String TITLE = "com.aarogya.health.aarogya.Healthbuzz.titlemessage";//putting name for extras
+    public final static String DATE ="com.aarogya.health.aarogya.Healthbuzz.date";
+    public final static String IMAGE ="com.aarogya.health.aarogya.Healthbuzz.image";
+    public final static String DETAIL="com.aarogya.health.aarogya.Healthbuzz.detail";
+    public final static String LINK="com.aarogya.health.aarogya.Healthbuzz.link";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listtry);
         c=this;
-        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo activenetwork = manager.getActiveNetworkInfo();
         boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
         progressDialog=new ProgressDialog(this);
@@ -81,7 +81,7 @@ public class listtry extends AppCompatActivity {
             issuedialog.show(getFragmentManager(),"issue");
         }
             ListView list = (ListView) findViewById(R.id.listView);
-            listtry tryo = this;//getting context
+            Healthbuzz tryo = this;//getting context
             Resources res = getResources();
             //Log.e("id", "" + res.getIdentifier("com.aarogya.health.aarogya:layout/activity_home", null, null));
             adapter = new CustomAdapter(this, lData, res);
@@ -117,7 +117,7 @@ public class listtry extends AppCompatActivity {
             builder.setMessage("Active internet connection required!")
                     .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            ConnectivityManager manager = (ConnectivityManager) c.getSystemService(c.CONNECTIVITY_SERVICE);
+                            ConnectivityManager manager = (ConnectivityManager) c.getSystemService(CONNECTIVITY_SERVICE);
                             NetworkInfo activenetwork = manager.getActiveNetworkInfo();
                             boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
                             if (isConnected) {
@@ -134,9 +134,8 @@ public class listtry extends AppCompatActivity {
                     .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // User cancelled the dialog
-                            Intent back= new Intent(c,Welcome.class);
-                            startActivity(back);
-                            listtry.this.finish();
+
+                            Healthbuzz.this.finish();
                         }
                     });
             // Create the AlertDialog object and return it

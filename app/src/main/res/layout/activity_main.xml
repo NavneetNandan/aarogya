@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:orientation="vertical"
-    tools:context="com.example.a_nil.hello.Login"
+    tools:context="com.example.a_nil.aarogya.Login"
     android:id="@+id/mainbody"
     android:weightSum="1">
 <LinearLayout

@@ -1,18 +1,14 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,11 +21,10 @@ public class Recorder_View extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recorder__view);
         Intent prev=getIntent();
-        String jsonStr=prev.getStringExtra("json");
+        String doe=prev.getStringExtra("doe");
         SharedPreferences sharedPref=this.getSharedPreferences("logininfo", this.MODE_PRIVATE);
         String usernamevalue=sharedPref.getString("username", null);
-        String namevalue=sharedPref.getString("name",null);
-
+        String namevalue=sharedPref.getString("name", null);
         String bloodgroupvalue=sharedPref.getString("bloodgroup", null);
         String dob_s=sharedPref.getString("dob", null);
         SimpleDateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
@@ -42,17 +37,52 @@ public class Recorder_View extends AppCompatActivity {
         Date date =new Date();
         String DOE=simple.format(date);
         int age=date.getYear()-dob.getYear();
+        HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
+        SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
+        String searchQuery = "SELECT  * FROM " + HealthFormContract.HealthEntry.TABLE_NAME+" WHERE "+HealthFormContract.HealthEntry.COLUMN_NAME_DOE+" = \"" +doe+"\"";
+        final Cursor c = healthDb.rawQuery(searchQuery, null);
+        c.moveToFirst();
 
-        try {
+        String heightValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
+        String weightValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
+        String bloodpressValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE));
+        String visionValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_VISION));
+        String haemoValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
+        String bloodsugarValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
+        String thyroxineValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
+        String martstatusValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
+        TextView height=(TextView)findViewById(R.id.editheight);
+        height.setText(heightValue+" Kg");
+        TextView weight=(TextView)findViewById(R.id.editweight);
+        weight.setText(weightValue+" cm");
+        TextView bloodgrp=(TextView)findViewById(R.id.editbloodgrp);
+        bloodgrp.setText(bloodgroupvalue);
+        TextView name=(TextView)findViewById(R.id.editname);
+        name.setText(namevalue);
+        TextView martialstatus=(TextView)findViewById(R.id.editmartialstatus);
+        martialstatus.setText(martstatusValue);
+        TextView haemoglobin=(TextView)findViewById(R.id.edithaemoglobin);
+        haemoglobin.setText(haemoValue+" g/dl");
+        TextView vision=(TextView)findViewById(R.id.editvision);
+        vision.setText(visionValue);
+        TextView bldpressure=(TextView)findViewById(R.id.editblood_pressure);
+        bldpressure.setText(bloodpressValue);
+        TextView bloodsuger=(TextView)findViewById(R.id.editbloodsugar);
+        bloodsuger.setText(bloodsugarValue+" g/dl");
+        TextView thyroid=(TextView)findViewById(R.id.editThyroid);
+        thyroid.setText(thyroxineValue);
+        TextView ageView=(TextView)findViewById(R.id.editage);
+        ageView.setText(age+" years");
+        /*try {
             JSONObject jsonObject=new JSONObject(jsonStr);
-            String heightValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT);
-            String weightValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT);
-            String bloodpressValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE);
-            String visionValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_VISION);
-            String haemoValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN);
-            String bloodsugarValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR);
-            String thyroxineValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID);
-            String martstatusValue=jsonObject.getString(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS);
+            String heightValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
+            String weightValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
+            String bloodpressValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE))));
+            String visionValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_VISION));
+            String haemoValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
+            String bloodsugarValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
+            String thyroxineValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
+            String martstatusValue=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
             TextView height=(TextView)findViewById(R.id.editheight);
             height.setText(heightValue);
             TextView weight=(TextView)findViewById(R.id.editweight);
@@ -77,7 +107,7 @@ public class Recorder_View extends AppCompatActivity {
             ageView.setText(""+age);
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
         /*HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
         SQLiteDatabase healthDb=mDbHelper.getReadableDatabase();
         String searchQuery = "SELECT  * FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
@@ -126,7 +156,7 @@ public class Recorder_View extends AppCompatActivity {
                 HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
                 SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
                 String deleteQuery = "DELETE FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
-                Cursor c = healthDb.rawQuery(deleteQuery, null);
+                healthDb.execSQL(deleteQuery);
                 startActivity(new Intent(this, MainActivity.class));
                 this.finish();
                 return true;

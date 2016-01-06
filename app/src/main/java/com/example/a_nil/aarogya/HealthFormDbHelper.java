@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

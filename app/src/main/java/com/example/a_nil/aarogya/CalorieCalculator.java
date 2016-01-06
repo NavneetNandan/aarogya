@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +15,6 @@ public class CalorieCalculator extends AppCompatActivity {
         setContentView(R.layout.activity_calorie_calculator);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +7,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -57,6 +55,7 @@ public class Healthrecorder extends AppCompatActivity {
         while (c.isAfterLast() == false){
             count++;
             c.moveToNext();
+
         }
         Log.e("Count",""+count);
         //if(count==0){
@@ -65,7 +64,7 @@ public class Healthrecorder extends AppCompatActivity {
         Resources res = getResources();
         final Button retry=(Button)findViewById(R.id.retry);
         final Drawable loading=res.getDrawable(R.drawable.loading2);
-        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
+        /*ConnectivityManager manager = (ConnectivityManager) this.getSystemService(this.CONNECTIVITY_SERVICE);
         NetworkInfo activenetwork = manager.getActiveNetworkInfo();
         boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
         retry.setOnClickListener(new View.OnClickListener() {
@@ -79,10 +78,11 @@ public class Healthrecorder extends AppCompatActivity {
                     msg.setText("Loading your old records");
                     img.setImageDrawable(loading);
                     FetchNetwork fetchNetwork=new FetchNetwork();
-                    fetchNetwork.execute();}
+                    fetchNetwork.execute();
+                }
             }
         });
-        if(isConnected){
+        /*if(isConnected){
             retry.setVisibility(View.INVISIBLE);
             msg.setText("Loading your old records");
             img.setImageDrawable(loading);
@@ -97,19 +97,33 @@ public class Healthrecorder extends AppCompatActivity {
             Log.e("Yes","me");
         }
         //}
-        /*else{
+        else{*/
             int i=0;
+
         c.moveToFirst();
-            String[] alldates=new String[50];
+            String[] alldates=new String[count];
+        final String[] dates=new String[count];
             while (c.isAfterLast() == false){
-                alldates[i++]=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));
-                Log.e("date",""+alldates[i]);
+                dates[i]=c.getString(c.getColumnIndex(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));
+                alldates[i]="Health Record of "+dates[i++];
+                Log.e("date",""+alldates[i-1]);
                 c.moveToNext();
             }
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(cont,R.layout.list,alldates);
+        ListView listView=(ListView)findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+        final Intent intent = new Intent(cont,Recorder_View.class);
+        //final JSONArray finalInfo = info;
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {//when a news is clicked in list
+                intent.putExtra("doe", dates[i]);
+                startActivity(intent);
+            }
+        });
             //ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,R.layout.list,alldates);
-            ListView listView=(ListView)findViewById(R.id.listView);
             //listView.setAdapter(adapter);
-        //}*/
+        //}
 
 
         Button addNew=(Button)findViewById(R.id.button);
@@ -195,14 +209,14 @@ public class Healthrecorder extends AppCompatActivity {
             String date=null;
             String[] alldates=null;
             JSONArray info=null;
-            try {
+            /*try {
                 JSONObject db=new JSONObject(jsonStr);
                 info=db.getJSONArray("detail");
                 alldates=new String[info.length()];
                 for(int i=0;i<info.length();i++){
                     JSONObject data=info.getJSONObject(i);
                     alldates[i]="Health Record of "+data.getString("doe");
-                }
+                }*/
                 img.setVisibility(View.INVISIBLE);
                 msg.setVisibility(View.INVISIBLE);
 
@@ -226,9 +240,9 @@ public class Healthrecorder extends AppCompatActivity {
                     }
                 });
 
-            } catch (JSONException e) {
+            /*} catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 
@@ -263,7 +277,7 @@ public class Healthrecorder extends AppCompatActivity {
                 HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
                 SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
                 String deleteQuery = "DELETE FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
-                Cursor c = healthDb.rawQuery(deleteQuery, null);
+                healthDb.execSQL(deleteQuery);
                 startActivity(new Intent(this, MainActivity.class));
                 this.finish();
                 return true;
@@ -271,6 +285,5 @@ public class Healthrecorder extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 }

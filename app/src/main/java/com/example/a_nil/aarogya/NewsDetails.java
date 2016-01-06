@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -34,11 +34,11 @@ public class NewsDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
         Intent from=getIntent();
-        String title=from.getStringExtra(listtry.TITLE);
-        String date=from.getStringExtra(listtry.DATE);
-        String image=from.getStringExtra(listtry.IMAGE);
-        String detail=from.getStringExtra(listtry.DETAIL);
-        String link=from.getStringExtra(listtry.LINK);
+        String title=from.getStringExtra(Healthbuzz.TITLE);
+        String date=from.getStringExtra(Healthbuzz.DATE);
+        String image=from.getStringExtra(Healthbuzz.IMAGE);
+        String detail=from.getStringExtra(Healthbuzz.DETAIL);
+        String link=from.getStringExtra(Healthbuzz.LINK);
         TextView titleV=(TextView)findViewById(R.id.titleview);
         TextView dateV=(TextView)findViewById(R.id.dateView);
         TextView detailV=(TextView)findViewById(R.id.detailView);
@@ -85,9 +85,7 @@ public class NewsDetails extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }

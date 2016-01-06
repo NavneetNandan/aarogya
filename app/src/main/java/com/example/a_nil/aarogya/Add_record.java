@@ -1,5 +1,6 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -41,21 +42,21 @@ public class Add_record extends AppCompatActivity {
     int age;
     Values value=null;
     Context c=null;
-
+    Activity activity =this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_record);
-        SharedPreferences sharedPref=this.getSharedPreferences("logininfo", this.MODE_PRIVATE);
+        c=this;
+        SharedPreferences sharedPref=this.getSharedPreferences("logininfo", MODE_PRIVATE);
         username=sharedPref.getString("username",null);
         name=sharedPref.getString("name",null);
         TextView nameView=(TextView)findViewById(R.id.editname);
         nameView.setText(name);
         bloodgroup=sharedPref.getString("bloodgroup",null);
-        TextView bloodView=(TextView)findViewById(R.id.editblood);
-        bloodView.setText(bloodgroup);
+        TextView bloodgrpView=(TextView)findViewById(R.id.editblood);
+        bloodgrpView.setText(bloodgroup);
         String dob_s=sharedPref.getString("dob",null);
-        c=this;
         SimpleDateFormat simple = new SimpleDateFormat("dd/MM/yyyy");
         Date dob= null;
         try {
@@ -161,7 +162,11 @@ public class Add_record extends AppCompatActivity {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("volleyerror", error.toString());
+                    SharedPreferences sharedPref = c.getSharedPreferences("logininfo", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putInt("unsynced", sharedPref.getInt("unsynced", 0) + 1);
+                    editor.commit();
+                    Log.e("volleyerror", error.toString()+ "unsynced"+sharedPref.getInt("unsynced",0));
 
                 }
             })
@@ -182,6 +187,7 @@ public class Add_record extends AppCompatActivity {
                     return params;
                 }};
             queue.add(stringRequest);
+            activity.finish();
             Intent healthrecord=new Intent(c,Healthrecorder.class);
             startActivity(healthrecord);
 
@@ -209,7 +215,7 @@ public class Add_record extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch(id) {
             case R.id.action_SignOut: {
-                SharedPreferences sharedPref = this.getSharedPreferences("logininfo", this.MODE_PRIVATE);
+                SharedPreferences sharedPref = this.getSharedPreferences("logininfo", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("username", null);//// TODO: add all entries
                 editor.putBoolean("loggedin", false);
@@ -223,7 +229,7 @@ public class Add_record extends AppCompatActivity {
                 HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
                 SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
                 String deleteQuery = "DELETE FROM " + HealthFormContract.HealthEntry.TABLE_NAME;
-                Cursor c = healthDb.rawQuery(deleteQuery, null);
+                healthDb.execSQL(deleteQuery);
                 startActivity(new Intent(this, MainActivity.class));
                 this.finish();
                 return true;
