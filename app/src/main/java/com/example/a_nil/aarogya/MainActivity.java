@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(home);
             this.finish();
         }
-
-        //set=(TextView)findViewById(R.id.textView5);
         eusername = (EditText) findViewById(R.id.edusername);
         epassword = (EditText) findViewById(R.id.edpassward);
         etrigister = (TextView) findViewById(R.id.register);
@@ -134,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
                         try {
                             Log.e("response", response);
                             json=new JSONObject(response);
@@ -144,8 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 dialog.setMessage(getString(R.string.Loading_data));
                                 try {
                                     updatePreferences(username);
-                                    Createdatabase createdatabase=new Createdatabase();
-                                    createdatabase.execute(username);
+                                    createdatabase(username);
                                 } catch (JSONException e) {
                                     Snackbar.make(etrigister, R.string.ProblemOccured, Snackbar.LENGTH_INDEFINITE).show();
                                     dialog.hide();
@@ -224,63 +219,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.apply();
     }
 
-    protected class Createdatabase extends AsyncTask<String,Void,Integer>{
-        @Override
-        protected Integer doInBackground(String... strings) {
-            final String[] url = {"http://aarogya.6te.net/aarogya/fetch_hr.php?username=" + strings[0]};
-                RequestQueue queue=Volley.newRequestQueue(c);
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url[0],
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String jsonStr) {
-                                HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
-                                SQLiteDatabase healthDb=mDbHelper.getWritableDatabase();
-                                try {
-                                    JSONObject data = new JSONObject(jsonStr);
-                                    JSONArray dataarray=data.getJSONArray("detail");
-                                    for (int i=0;i<dataarray.length();i++){
-                                        JSONObject dataJ=dataarray.getJSONObject(i);
-                                        ContentValues values = new ContentValues();
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
-                                        values.put(HealthFormContract.HealthEntry.COLUMN_NAME_VISION,dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_VISION));
-                                        healthDb.insert(HealthFormContract.HealthEntry.TABLE_NAME, null, values);
-                                    }
-                                } catch (JSONException e) {
-                                    Log.e("ERROR",e.toString());
-                                    e.printStackTrace();
-                                }
-
-                                healthDb.close();
-                            }
-                        }, new Response.ErrorListener() {
+    void createdatabase(String username) {
+        final String url = "http://aarogya.6te.net/aarogya/fetch_hr.php?username=" + username;
+        RequestQueue queue = Volley.newRequestQueue(c);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("volleyerror",error.toString());
-                        dialog.hide();
-                        Snackbar.make(etrigister,R.string.ConnectivityIssue,Snackbar.LENGTH_INDEFINITE).show();
+                    public void onResponse(String jsonStr) {
+                        HealthFormDbHelper mDbHelper = new HealthFormDbHelper(getApplicationContext());
+                        SQLiteDatabase healthDb = mDbHelper.getWritableDatabase();
+                        try {
+                            JSONObject data = new JSONObject(jsonStr);
+                            JSONArray dataarray = data.getJSONArray("detail");
+                            for (int i = 0; i < dataarray.length(); i++) {
+                                JSONObject dataJ = dataarray.getJSONObject(i);
+                                ContentValues values = new ContentValues();
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_DOE, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_DOE));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_USERNAME));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HEIGHT));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_WEIGHT));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODPRESSURE));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_BLOODSUGAR));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_HAEMOGLOBIN));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_MARTIALSTATUS));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_THYROID));
+                                values.put(HealthFormContract.HealthEntry.COLUMN_NAME_VISION, dataJ.getString(HealthFormContract.HealthEntry.COLUMN_NAME_VISION));
+                                healthDb.insert(HealthFormContract.HealthEntry.TABLE_NAME, null, values);
+                                dialog.hide();
+                                Intent intent = new Intent(c, Welcome.class);
+                                startActivity(intent);
+                                MainActivity.this.finish();
+                            }
+                        } catch (JSONException e) {
+                            Log.e("ERROR", e.toString());
+                            e.printStackTrace();
+                        }
+
+                        healthDb.close();
                     }
-                });
-                queue.add(stringRequest);
-
-
-            return 1;
-        }
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            dialog.hide();
-            Intent intent=new Intent(c,Welcome.class);
-            startActivity(intent);
-            MainActivity.this.finish();
-        }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("volleyerror", error.toString());
+                dialog.hide();
+                Snackbar.make(etrigister, R.string.ConnectivityIssue, Snackbar.LENGTH_INDEFINITE).show();
+            }
+        });
+        queue.add(stringRequest);
     }
 }

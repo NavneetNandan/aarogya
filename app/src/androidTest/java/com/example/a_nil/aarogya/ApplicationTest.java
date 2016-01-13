@@ -1,4 +1,4 @@
-package com.example.a_nil.hello;
+package com.example.a_nil.aarogya;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

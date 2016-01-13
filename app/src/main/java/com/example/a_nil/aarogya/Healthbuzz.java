@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -21,15 +22,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
@@ -37,23 +47,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Healthbuzz extends AppCompatActivity {
-    //ArrayAdapter listadapter;
     Context c=null;
-    public static Drawable LoadImageFromWebOperations(String url) {//function for image download and return a drawable object
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "src name");
-
-            return d;
-        } catch (Exception e) {
-            Log.e("loading imag", e.toString());
-            return null;
-        }
-    }
+    final String HEALTHBUZZCACHE="healthbuzzcache";
     ProgressDialog progressDialog=null;
-
+    ListView list=null;
     String[] image = null;
-    public ArrayList<ListData> lData = new ArrayList<ListData>();//arraylist of listdata class type
+    public ArrayList<ListData> lData = new ArrayList<>();//arraylist of listdata class type
     CustomAdapter adapter = null;//declaring customadapter for global use
     public final static String TITLE = "com.aarogya.health.aarogya.Healthbuzz.titlemessage";//putting name for extras
     public final static String DATE ="com.aarogya.health.aarogya.Healthbuzz.date";
@@ -65,25 +64,70 @@ public class Healthbuzz extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listtry);
         c=this;
-        ConnectivityManager manager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo activenetwork = manager.getActiveNetworkInfo();
-        boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
-        progressDialog=new ProgressDialog(this);
-        progressDialog.setMessage("Loading Health News.\nPlease Wait...");
-        progressDialog.setCancelable(false);
-        if (isConnected) {
-            FetchNetwork fetch = new FetchNetwork();
-            progressDialog.show();
-            fetch.execute();//starting download of data
+        try{
+            FileInputStream fileInputStream=openFileInput(HEALTHBUZZCACHE);
+            InputStreamReader reader=new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader =new BufferedReader(reader);
+            StringBuffer buffer=new StringBuffer();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                buffer.append(line + "\n");
+            }
+            String jsonStr =buffer.toString();
+            parseTitles(jsonStr);
+            ConnectivityManager manager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+            NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+            boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+            progressDialog=new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            if (isConnected) {
+                fetchnetwork();//starting download of data
+            }
+            /*try {
+                int c=reader.read();
+                while (c!=-1){
+                    buffer.append((char)c);
+                }
+                reader.close();
+                String jsonStr=buffer.toString();
+                parseTitles(jsonStr);
+                ConnectivityManager manager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+                NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+                boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+                progressDialog=new ProgressDialog(this);
+                progressDialog.setCancelable(false);
+                if (isConnected) {
+                    fetchnetwork();//starting download of data
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }*/
         }
-        else {
-            Connectivityissue issuedialog=new Connectivityissue();
-            issuedialog.show(getFragmentManager(),"issue");
+        catch (FileNotFoundException e){
+// TODO: 09-01-2016 no cache so generate json first from internet to display
+
+            ConnectivityManager manager = (ConnectivityManager) this.getSystemService(CONNECTIVITY_SERVICE);
+            NetworkInfo activenetwork = manager.getActiveNetworkInfo();
+            boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
+            progressDialog=new ProgressDialog(this);
+            progressDialog.setMessage("Loading Health News.\nPlease Wait...");
+            progressDialog.setCancelable(false);
+            if (isConnected) {
+                progressDialog.show();
+                fetchnetwork();//starting download of data
+            }
+            else {
+                Connectivityissue issuedialog=new Connectivityissue();
+                issuedialog.show(getFragmentManager(),"issue");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-            ListView list = (ListView) findViewById(R.id.listView);
-            Healthbuzz tryo = this;//getting context
+
+        list = (ListView) findViewById(R.id.listView);
             Resources res = getResources();
-            //Log.e("id", "" + res.getIdentifier("com.aarogya.health.aarogya:layout/activity_home", null, null));
             adapter = new CustomAdapter(this, lData, res);
 
             final Intent intent = new Intent(this, NewsDetails.class);
@@ -121,9 +165,8 @@ public class Healthbuzz extends AppCompatActivity {
                             NetworkInfo activenetwork = manager.getActiveNetworkInfo();
                             boolean isConnected = activenetwork != null && activenetwork.isConnectedOrConnecting();
                             if (isConnected) {
-                                FetchNetwork fetch = new FetchNetwork();
                                 progressDialog.show();
-                                fetch.execute();//starting download of data
+                                fetchnetwork();//starting download of data
                             }
                             else {
                                 Connectivityissue issuedialog=new Connectivityissue();
@@ -151,15 +194,61 @@ public class Healthbuzz extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchNetwork fetch =new FetchNetwork();
-            fetch.execute();
+
+            fetchnetwork();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public class FetchNetwork extends AsyncTask<Void, Void, Integer> {
+    void fetchnetwork() {
+        final  String url = "http://www.aarogya.6te.net/aarogya/get.data.php?get_json";
+        RequestQueue queue = Volley.newRequestQueue(c);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String jsonStr) {
+                        try {
+                            try {
+                                FileOutputStream fos=openFileOutput(HEALTHBUZZCACHE,Context.MODE_PRIVATE);
+                                fos.write(jsonStr.getBytes());
+                                fos.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            parseTitles(jsonStr);
+                        }
+                        catch (JSONException e)
+                        {
+                            Log.e("ERROR IN PARSING", " JSON", e);
+                        }
+                        adapter.notifyDataSetChanged();
+                        progressDialog.hide();
+                        Loadimages loadimg = new Loadimages();
+                        loadimg.execute();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("volleyerror", error.toString());
+                progressDialog.hide();
+                Snackbar.make(list, R.string.ConnectivityIssue, Snackbar.LENGTH_INDEFINITE).show();
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    public static Drawable LoadImageFromWebOperations(String url) {//function for image download and return a drawable object
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            return Drawable.createFromStream(is, "src name");
+        } catch (Exception e) {
+            Log.e("loading imag", e.toString());
+            return null;
+        }
+    }
+   /* public class FetchNetwork extends AsyncTask<Void, Void, Integer> {
         @Override
         protected Integer doInBackground(Void... net) {
             HttpURLConnection urlConnection = null;
@@ -214,30 +303,33 @@ public class Healthbuzz extends AppCompatActivity {
                 }
             }
             try {
+                try {
+                    FileOutputStream fos=openFileOutput(HEALTHBUZZCACHE,Context.MODE_PRIVATE);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 parseTitles(jsonStr);
                 return 1;
             }
             catch (JSONException e)
             {
-                Log.e("ERROR IN PARSING"," JSON",e);
+                Log.e("ERROR IN PARSING", " JSON", e);
             }
             return null;
         }
 
         protected void onPostExecute(Integer x) {
-            Log.e("i m", "here");
             adapter.notifyDataSetChanged();
-            Log.e("notify", "adapter");
             progressDialog.hide();
             Loadimages loadimg = new Loadimages();
             loadimg.execute();
 
         }
-    }
+    }*/
 
     public class Loadimages extends AsyncTask<Void, Void, Integer> {
         protected Integer doInBackground(Void... net) {
-            ListData temp = new ListData();
+            ListData temp;
             Log.e("Image", "loading");
             if (image.length != 0)
                 for (int i = 0; i < image.length; i++) {
@@ -252,16 +344,11 @@ public class Healthbuzz extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer integer) {
             adapter.notifyDataSetChanged();
-
         }
     }
     public void parseTitles(String json_Str) throws JSONException
     {
         Log.e("Json", json_Str);
-        /*JSONObject page=new JSONObject(json_Str);
-        JSONObject result=page.getJSONObject("r");
-        JSONArray docs=result.getJSONArray("docs");
-*/
         JSONObject page = new JSONObject(json_Str);
         JSONArray result = page.getJSONArray("item");
         Log.e("Json", "Starting");
@@ -303,7 +390,6 @@ public class Healthbuzz extends AppCompatActivity {
             temp[i].setTitle(title[i]);
             temp[i].setDate(date[i]);
             temp[i].setSource(source[i]);
-            //temp[i].setImage(image[i]);
             temp[i].setDescription(description[i]);
             temp[i].setLink(link[i]);
             lData.add(temp[i]);
